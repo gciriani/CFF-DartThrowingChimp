@@ -130,9 +130,9 @@ def plot_2D(P, z):
 
 
 if __name__ == "__main__":
-    # F = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
-    F = [0.2, 0.2, 0.4, 0.1, 0.1] #frequency of each event, must sum to 1 = 100% prob.
-    assert sum(F) == 1
+    F = [0.5, 0.3, 0.2]
+    # F = [0.2, 0.2, 0.4, 0.1, 0.1]
+    assert sum(F) == 1, "Frequency of each event, must sum to 1 = 100% prob."
     m = len(F)
     # xx, yy = linear_space(m)
     P = linear_space(m)
