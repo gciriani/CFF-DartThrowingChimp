@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 EPSILON = 0.05
 
 
-def FS( f, p, m):
+def FS(f, p, m):
     """    Calculates Fair Skill score with log base 2 score
     f = frequency vector of actual outcomes
     p = probability vector of mutually exclusive events
@@ -31,22 +31,36 @@ def FS( f, p, m):
     #timing: %timeit np.multiply(x, x)
     #the following implementation of multiply, needs to be a pandas DataFrame
     #FS = np.log2(x).multiply(y,axis='index')      
-    return (f * np.log2(p)).sum(axis=1) + np.log2(m) 
+    return (f * np.log2(p)).sum(axis=1) + np.log2(m)
 
 
 def FS2(f, x, y):
-    """Calculates Fair Skill score with log base 2 score
+    """
+    Calculates Fair Skill score with log base 2 score
 
     Args:
         f (ndarray) : frequency vector of actual outcomes
         x, y (ndarray) : linspace (0.01, 0.99) with 99 points
 
     Returns:
-        Fair score calculation
+        Array with Fair score calculation
     """
     f1, f2, f3 = f
     return f1 * np.log2(x) + f2 * np.log2(y) + f3 * np.log2(1 - x - y) + np.log2(3)
 
+
+def BS(f, x, y):
+    """
+    Calculates Brier score
+
+    Args:
+        f (ndarray) : frequency vector of actual outcomes
+        x, y (ndarray) : linspace (0.01, 0.99) with 99 points
+
+    Returns:
+        Array with Brier score calculation
+    """
+    pass
 
 #3-bin example
 m = 3 #mutually excluding events
@@ -93,23 +107,25 @@ z = 0.005 #or other choices
 #apply 3rd step to round 3, and see where teams and individuals are situated 
 #compared to the probability of being above uniform probability score.
 
-def linear_space(n):
-    p = np.linspace(0.01, 0.99, n)
-    x1, x2 = np.meshgrid(p, p, sparse=True)
-    return x1, x2
+def linear_space(m):
+    p = np.linspace(0.01, 0.99, 99)
+    P = [p for _ in range(m - 1)]
+    return np.meshgrid(*P, sparse=True)
 
 
-def dart_probability(n, z):
+def dart_probability(z):
+    n = 99
     space = n * (n + 1) / 2
     return np.sum(z > 0) / space
 
 
 if __name__ == "__main__":
-    N = 99
+    m = 3
     f = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
-    xx, yy = linear_space(N)
+    xx, yy = linear_space(m)
     z = FS2(f, xx, yy)
-    prob = dart_probability(N, z)
+    # z = FS(f, xx, 3)
+    prob = dart_probability(z)
     print(f"Probability of having FS > 0 is {prob}")
 
     p = xx.squeeze()
