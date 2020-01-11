@@ -38,7 +38,7 @@ def FS(F, P, m):
 
 def FS2(f, x, y):
     """
-    Calculates Fair Skill score with log base 2 score
+    Calculates Fair Skill score for 3 bins
 
     Args:
         f (ndarray) : frequency vector of actual outcomes
@@ -68,7 +68,7 @@ def BS(F, P, m):
 
 def BS2(f, x, y):
     """
-    Calculates Fair Skill score with log base 2 score
+    Calculates Brier score for 3 bins
 
     Args:
         f (ndarray) : frequency vector of actual outcomes
