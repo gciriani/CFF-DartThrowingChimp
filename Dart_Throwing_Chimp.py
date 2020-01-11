@@ -15,6 +15,11 @@ import numpy as np
 #import pandas as pd
 #import os.path
 import ternary
+import matplotlib.pyplot as plt
+
+
+EPSILON = 0.05
+
 
 def FS( f, p, m):
     """    Calculates Fair Skill score with log base 2 score
@@ -27,6 +32,22 @@ def FS( f, p, m):
     #the following implementation of multiply, needs to be a pandas DataFrame
     #FS = np.log2(x).multiply(y,axis='index')      
     return (f * np.log2(p)).sum(axis=1) + np.log2(m) 
+
+
+def FS2(f, x, y):
+    """Calculates Fair Skill score with log base 2 score
+
+    Args:
+        f (ndarray) : frequency vector of actual outcomes
+        x, y (ndarray) : linspace (0.01, 1) with 100 points
+
+    Returns:
+        Fair score calculation
+    """
+    f1, f2, f3 = f
+    return f1 * np.log2(x) + f2 * np.log2(y) + f3 * np.log2(1 - x - y) + np.log2(3)
+
+
 #3-bin example
 m = 3 #mutually excluding events
 freq = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
@@ -71,3 +92,17 @@ z = 0.005 #or other choices
 #4th step:
 #apply 3rd step to round 3, and see where teams and individuals are situated 
 #compared to the probability of being above uniform probability score.
+
+def linear_space():
+    p = np.linspace(0.01, 1, 100)
+    x1, x2 = np.meshgrid(p, p, sparse=True)
+    return x1, x2
+
+
+if __name__ == "__main__":
+    f = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
+    xx, yy = linear_space()
+    z = FS2(f, xx, yy)
+    p = xx.squeeze()
+    h = plt.contourf(p, p, z)
+    plt.show()
