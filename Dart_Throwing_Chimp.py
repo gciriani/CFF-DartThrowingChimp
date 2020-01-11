@@ -3,12 +3,12 @@
 Calculates the probability that a Dart-Throwing Chimp has to provide a
 Counter-Factual Forecast that is useful
 
-Created on Thu Jan  9 17:00:17 2020
+Created on Thu Jan  9 17:00:17 2020
 @author: Giovanni
-Will need ternary library  for plot of 3 bin example:
-    https://github.com/marcharper/python-ternary
-    installed through Anaconda dashboard (for instructions
-    https://stackoverflow.com/questions/39299726/cant-find-package-on-anaconda-navigator-what-to-do-next)
+Will need ternary library  for plot of 3 bin example:
+    https://github.com/marcharper/python-ternary
+    installed through Anaconda dashboard (for instructions
+    https://stackoverflow.com/questions/39299726/cant-find-package-on-anaconda-navigator-what-to-do-next)
 """
 
 import fire
@@ -24,15 +24,15 @@ FREQ = [0.5, 0.3, 0.2]
 
 
 def FS(F, P, m):
-    """    Calculates Fair Skill score with log base 2 score
-    F = frequency vector of actual outcomes
-    P = probability vector of mutually exclusive events
-    m = number of mutually exclusive events
-    check if it works even when y has both 0 and 1 values?
+    """    Calculates Fair Skill score with log base 2 score
+    F = frequency vector of actual outcomes
+    P = probability vector of mutually exclusive events
+    m = number of mutually exclusive events
+    check if it works even when y has both 0 and 1 values?
     """
     #timing: %timeit np.multiply(x, x)
     #the following implementation of multiply, needs to be a pandas DataFrame
-    #FS = np.log2(x).multiply(y,axis='index')      
+    #FS = np.log2(x).multiply(y,axis='index')      
     # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
     determined = 1 + np.sum([-1 * p for p in P])
     return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
@@ -59,8 +59,8 @@ def BS(F, P, m):
 
     Args:
         F (ndarray) : frequency vector of actual outcomes
-        P : probability vector of mutually exclusive events
-        m : number of mutually exclusive events
+        P : probability vector of mutually exclusive events
+        m : number of mutually exclusive events
 
     Returns:
         Array with Brier score calculation
@@ -80,7 +80,8 @@ def BS2(f, x, y):
         Array with Fair score calculation
     """
     f1, f2, f3 = f
-    z = f1 * (1 - x)**2 + f2 * (1 - y)**2 + f3 * (x + y)**2
+    z = (f1 * (1 - x)**2 + f2 * (1 - y)**2 + f3 * (x + y)**2 
+         + (1 - f1) * x**2 + (1 - f2) * y**2 + (1 - f3) * (1 - x - y)**2 )
     mask = (x + y) > 1
     z[mask] = np.nan
     return z
@@ -121,7 +122,7 @@ z = 0.005 #or other choices
 #replace all 0 values with z, and normalize to obtain a total of 1
 #c
 #2nd step: 
-#plot on a ternary graph the contour of FS and of BS identical to
+#plot on a ternary graph the contour of FS and of BS identical to
 #that obtained for uniform distribution: FS=0, BS=(1-1/m)^2
 #3rd step:
 #scale up the calculation so that it is possible to do calculate it for an
@@ -136,14 +137,14 @@ def linear_space(m):
     return np.meshgrid(*P, sparse=True)
 
 
-def dart_probability(z, method='fs'):
+def dart_probability(z, m, method='fs'):
     n = 99
     if method == 'fs':
         space = n * (n + 1) / 2
         return np.sum(z > 0) / space
     elif method == 'bs':
         space = n * (n + 1) / 2 + n * 2 + 3
-        return np.sum(z < (1 - 1/3)**2) / space
+        return np.sum(z < ((m - 1)**2 +2)/m**2) / space
 
 
 def plot_2D(P, z, title):
@@ -164,10 +165,10 @@ def main(frequencies=FREQ):
     P = linear_space(m)
     fs = FS(frequencies, P, m)
     bs = BS2(frequencies, xx, yy)
-    prob_fs = dart_probability(fs, method='fs')
-    prob_bs = dart_probability(bs, method='bs')
+    prob_fs = dart_probability(fs, m, method='fs')
+    prob_bs = dart_probability(bs, m, method='bs')
     print(f"Probability of having FS > 0 is {prob_fs}")
-    print(f"Probability of having BS < 0.444 is {prob_bs}")
+    print(f"Probability of having BS < 0.667 is {prob_bs}")
 
     if m == 3:
         plot_2D(P, fs, title='Fair Skill')
