@@ -122,8 +122,15 @@ def dart_probability(z):
     return np.sum(z > 0) / space
 
 
+def plot_2D(P, z):
+    p, _ = P
+    p = p.squeeze()
+    h = plt.contourf(p, p, z)
+    plt.show()
+
+
 if __name__ == "__main__":
-    m = 3
+    m = 5
     F = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
     # xx, yy = linear_space(m)
     P = linear_space(m)
@@ -131,7 +138,5 @@ if __name__ == "__main__":
     prob = dart_probability(z)
     print(f"Probability of having FS > 0 is {prob}")
 
-    p, _ = P
-    p = p.squeeze()
-    h = plt.contourf(p, p, z)
-    plt.show()
+    if m == 3:
+        plot_2D(P, z)
