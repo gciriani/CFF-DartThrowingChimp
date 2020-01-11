@@ -32,7 +32,7 @@ def FS(F, P, m):
     #the following implementation of multiply, needs to be a pandas DataFrame
     #FS = np.log2(x).multiply(y,axis='index')      
     # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
-    determined = 1 + np.sum(-1 * p for p in P)
+    determined = 1 + np.sum([-1 * p for p in P])
     return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
 
 
@@ -130,7 +130,9 @@ def plot_2D(P, z):
 
 
 if __name__ == "__main__":
-    F = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
+    # F = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
+    F = [0.2, 0.2, 0.4, 0.1, 0.1] #frequency of each event, must sum to 1 = 100% prob.
+    assert sum(F) == 1
     m = len(F)
     # xx, yy = linear_space(m)
     P = linear_space(m)
