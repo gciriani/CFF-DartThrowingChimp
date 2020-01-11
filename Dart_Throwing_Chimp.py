@@ -11,6 +11,7 @@ Will need ternary library  for plot of 3 bin example:
     https://stackoverflow.com/questions/39299726/cant-find-package-on-anaconda-navigator-what-to-do-next)
 """
 
+import fire
 import numpy as np
 #import pandas as pd
 #import os.path
@@ -18,7 +19,8 @@ import ternary
 import matplotlib.pyplot as plt
 
 
-EPSILON = 0.05
+EPSILON = 0.005
+FREQ = [0.5, 0.3, 0.2]
 
 
 def FS(F, P, m):
@@ -152,16 +154,16 @@ def plot_2D(P, z, title):
     plt.show()
 
 
-if __name__ == "__main__":
-    F = [0.5, 0.3, 0.2]
+def main(frequencies=FREQ):
     # F = [0.2, 0.2, 0.4, 0.1, 0.1]
-    assert sum(F) == 1, "Frequency of each event, must sum to 1 = 100% prob."
-    m = len(F)
+    assert sum(frequencies) == 1, "Frequency of each event, must sum to 1 = 100% prob."
+    print(f"Processing frequencies {frequencies}...")
+    m = len(frequencies)
     xx, yy = linear_space(m)
 
     P = linear_space(m)
-    fs = FS(F, P, m)
-    bs = BS2(F, xx, yy)
+    fs = FS(frequencies, P, m)
+    bs = BS2(frequencies, xx, yy)
     prob_fs = dart_probability(fs, method='fs')
     prob_bs = dart_probability(bs, method='bs')
     print(f"Probability of having FS > 0 is {prob_fs}")
@@ -170,3 +172,7 @@ if __name__ == "__main__":
     if m == 3:
         plot_2D(P, fs, title='Fair Skill')
         plot_2D(P, bs, title='Brier Score')
+
+
+if __name__ == "__main__":
+    fire.Fire(main)
