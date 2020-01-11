@@ -39,7 +39,7 @@ def FS2(f, x, y):
 
     Args:
         f (ndarray) : frequency vector of actual outcomes
-        x, y (ndarray) : linspace (0.01, 1) with 100 points
+        x, y (ndarray) : linspace (0.01, 0.99) with 99 points
 
     Returns:
         Fair score calculation
@@ -93,16 +93,25 @@ z = 0.005 #or other choices
 #apply 3rd step to round 3, and see where teams and individuals are situated 
 #compared to the probability of being above uniform probability score.
 
-def linear_space():
-    p = np.linspace(0.01, 1, 100)
+def linear_space(n):
+    p = np.linspace(0.01, 0.99, n)
     x1, x2 = np.meshgrid(p, p, sparse=True)
     return x1, x2
 
 
+def dart_probability(n, z):
+    space = n * (n + 1) / 2
+    return np.sum(z > 0) / space
+
+
 if __name__ == "__main__":
+    N = 99
     f = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
-    xx, yy = linear_space()
+    xx, yy = linear_space(N)
     z = FS2(f, xx, yy)
+    prob = dart_probability(N, z)
+    print(f"Probability of having FS > 0 is {prob}")
+
     p = xx.squeeze()
     h = plt.contourf(p, p, z)
     plt.show()
