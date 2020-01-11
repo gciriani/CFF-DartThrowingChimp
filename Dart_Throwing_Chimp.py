@@ -5,7 +5,7 @@ Counter-Factual Forecast that is useful
 
 Created on Thu Jan  9 17:00:17 2020
 @author: Giovanni
-Will need ternary library  for plot of 3 bin example: 
+Will need ternary library  for plot of 3 bin example:
     https://github.com/marcharper/python-ternary
     installed through Anaconda dashboard (for instructions
     https://stackoverflow.com/questions/39299726/cant-find-package-on-anaconda-navigator-what-to-do-next)
@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 EPSILON = 0.05
 
 
-def FS(f, p, m):
+def FS(F, P, m):
     """    Calculates Fair Skill score with log base 2 score
     f = frequency vector of actual outcomes
     p = probability vector of mutually exclusive events
@@ -31,7 +31,9 @@ def FS(f, p, m):
     #timing: %timeit np.multiply(x, x)
     #the following implementation of multiply, needs to be a pandas DataFrame
     #FS = np.log2(x).multiply(y,axis='index')      
-    return (f * np.log2(p)).sum(axis=1) + np.log2(m)
+    # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
+    determined = 1 + np.sum(-1 * p for p in P)
+    return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
 
 
 def FS2(f, x, y):
@@ -62,11 +64,12 @@ def BS(f, x, y):
     """
     pass
 
+
 #3-bin example
 m = 3 #mutually excluding events
 freq = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
 prob = [[0.6, 0.25, 0.15] , [0.7, 0.2, 0.1]] #forecast probabilities
-print (FS(freq, prob, m) )
+# print (FS(freq, prob, m) )
 
 #1st step: 
 #obtain a linear space of all 100 percentage probabilities combos
@@ -121,13 +124,14 @@ def dart_probability(z):
 
 if __name__ == "__main__":
     m = 3
-    f = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
-    xx, yy = linear_space(m)
-    z = FS2(f, xx, yy)
-    # z = FS(f, xx, 3)
+    F = [0.5, 0.3, 0.2] #frequency of each event, must sum to 1 = 100% prob.
+    # xx, yy = linear_space(m)
+    P = linear_space(m)
+    z = FS(F, P, m)
     prob = dart_probability(z)
     print(f"Probability of having FS > 0 is {prob}")
 
-    p = xx.squeeze()
+    p, _ = P
+    p = p.squeeze()
     h = plt.contourf(p, p, z)
     plt.show()
