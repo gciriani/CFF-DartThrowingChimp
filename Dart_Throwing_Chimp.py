@@ -17,9 +17,10 @@ import numpy as np
 #import os.path
 import ternary
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 
-EPSILON = 0.005
+C = 0.005 # small constant
 FREQ = [0.5, 0.3, 0.2]
 
 
@@ -35,6 +36,7 @@ def FS(F, P, m):
     #FS = np.log2(x).multiply(y,axis='index')      
     # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
     determined = 1 + np.sum([-1 * p for p in P])
+    determined[np.isclose(determined, 0)] = C
     return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
 
 
@@ -191,6 +193,7 @@ def main(frequencies=FREQ):
     xx, yy = linear_space(m)
 
     P = linear_space(m)
+
     fs = FS(frequencies, P, m)
     bs = BS2(frequencies, xx, yy)
     prob_fs = dart_probability(fs, m, method='fs')
@@ -203,7 +206,9 @@ def main(frequencies=FREQ):
         # plot_2D(P, bs, title='Brier Score')
 
         scale=98
-        d = generate_heatmap_data(bs, scale)
+        scaler = MinMaxScaler()
+        fs = scaler.fit_transform(fs)
+        d = generate_heatmap_data(fs, scale)
 
         # tax.plot(points, linewidth=2.0, label="Curve")
 
@@ -211,7 +216,7 @@ def main(frequencies=FREQ):
         figure, tax = ternary.figure(scale=scale)
         tax.heatmap(d, style="triangular")
         tax.boundary()
-        tax.set_title("Brier Score")
+        tax.set_title("Fair Skill Score")
         tax.show()
 
         # points = generate_points(bs, scale)
