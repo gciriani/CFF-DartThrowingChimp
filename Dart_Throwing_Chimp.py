@@ -36,7 +36,9 @@ def FS(F, P, m):
     #FS = np.log2(x).multiply(y,axis='index')      
     # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
     determined = 1 + np.sum([-1 * p for p in P])
+    determined[determined < 0] = np.nan
     determined[np.isclose(determined, 0)] = C
+    print(determined)
     return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
 
 
@@ -155,20 +157,6 @@ def plot_2D(P, z, title):
     h = plt.contourf(p, p, z)
     plt.title(title)
     plt.show()
-
-
-
-import math
-
-def shannon_entropy(p):
-    """Computes the Shannon Entropy at a distribution in the simplex."""
-    s = 0.
-    for i in range(len(p)):
-        try:
-            s += p[i] * math.log(p[i])
-        except ValueError:
-            continue
-    return -1. * s
 
 
 def generate_heatmap_data(score, scale=1):
