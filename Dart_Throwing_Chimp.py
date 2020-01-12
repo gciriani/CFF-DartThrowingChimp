@@ -155,6 +155,34 @@ def plot_2D(P, z, title):
     plt.show()
 
 
+
+import math
+
+def shannon_entropy(p):
+    """Computes the Shannon Entropy at a distribution in the simplex."""
+    s = 0.
+    for i in range(len(p)):
+        try:
+            s += p[i] * math.log(p[i])
+        except ValueError:
+            continue
+    return -1. * s
+
+
+def generate_heatmap_data(score, scale=1):
+    from ternary.helpers import simplex_iterator
+    d = dict()
+    for (i,j,k) in simplex_iterator(scale):
+        d[(i,j)] = score[i, j]
+    return d
+
+
+def generate_points(score, scale):
+    dart = np.where(np.isclose(score, 0.667, rtol=0.005))
+    points = [(i, j, scale - i - j) for i, j in zip(*dart)]
+    return points
+
+
 def main(frequencies=FREQ):
     # F = [0.2, 0.2, 0.4, 0.1, 0.1]
     assert sum(frequencies) == 1, "Frequency of each event, must sum to 1 = 100% prob."
@@ -173,6 +201,23 @@ def main(frequencies=FREQ):
     if m == 3:
         plot_2D(P, fs, title='Fair Skill')
         plot_2D(P, bs, title='Brier Score')
+
+        scale=98
+        figure, tax = ternary.figure(scale=scale)
+        figure.set_size_inches(10, 8)
+        d = generate_heatmap_data(bs, scale)
+
+        # tax.plot(points, linewidth=2.0, label="Curve")
+
+        tax.heatmap(d, style="triangular")
+        tax.boundary()
+        tax.set_title("Score")
+        tax.show()
+
+        # points = generate_points(bs, scale)
+        # print(points)
+        # tax.scatter(points, marker='.', color='red', label="Red Squares")
+        # tax.show()
 
 
 if __name__ == "__main__":
