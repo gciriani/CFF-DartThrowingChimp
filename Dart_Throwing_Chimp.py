@@ -199,19 +199,19 @@ def main(frequencies=FREQ):
     print(f"Probability of having BS < 0.667 is {prob_bs}")
 
     if m == 3:
-        plot_2D(P, fs, title='Fair Skill')
-        plot_2D(P, bs, title='Brier Score')
+        # plot_2D(P, fs, title='Fair Skill')
+        # plot_2D(P, bs, title='Brier Score')
 
         scale=98
-        figure, tax = ternary.figure(scale=scale)
-        figure.set_size_inches(10, 8)
         d = generate_heatmap_data(bs, scale)
 
         # tax.plot(points, linewidth=2.0, label="Curve")
 
+        print("Plotting projected simplex...")
+        figure, tax = ternary.figure(scale=scale)
         tax.heatmap(d, style="triangular")
         tax.boundary()
-        tax.set_title("Score")
+        tax.set_title("Brier Score")
         tax.show()
 
         # points = generate_points(bs, scale)
