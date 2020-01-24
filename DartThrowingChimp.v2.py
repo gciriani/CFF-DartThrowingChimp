@@ -115,8 +115,6 @@ def DTC(actual, max_size = 10000, grid = 101):
     Examples: Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])]
     DTC(Actuals) ->  array([0.13434285, 0.18811881]) 
     """
-    chimp_chance = np.array([]) # initialize chimp_chance vector
-
     actual = actual[~np.isnan(actual)]
 
     m = actual.shape[0] # mutually exclusive events
@@ -131,10 +129,7 @@ def DTC(actual, max_size = 10000, grid = 101):
     # calculate Fair Skill for all probability combinations
     chimp_FS = FS(actual, dart_table)
     # calculate the chance of doing better than clueless and add it 
-    chimp_chance = np.append( chimp_chance,
-            (chimp_FS > 0).sum() / chimp_FS.shape[0] ) 
-
-    return chimp_chance
+    return (chimp_FS > 0).sum() / chimp_FS.shape[0] 
 
 
 # Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])] # example
