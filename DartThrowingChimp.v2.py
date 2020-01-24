@@ -141,7 +141,7 @@ Actuals = pd.read_csv(file_actuals)
 
 # read actuals from file
 #CFF, Actuals = pd.read_csv( folder_GJ + file_actuals, header=0, sep='\t')
-Chimp_chances = [float(DTC(actual)) for actual in Actuals.drop(columns='CFFs').values]# calculate chances
+Chimp_chances = [DTC(actual) for actual in Actuals.drop(columns='CFFs').values]# calculate chances
 print ("Chimp Test \n chimp has chances ", Chimp_chances, 
        " \n of doing better than clueless in the respective CFFs")
 #write results to file_chimp          
