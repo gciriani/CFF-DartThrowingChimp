@@ -115,7 +115,7 @@ def DTC(actual, max_size = 10000, grid = 101):
     Examples: Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])]
     DTC(Actuals) ->  array([0.13434285, 0.18811881]) 
     """
-    actual = actual[~np.isnan(actual)]
+    actual = actual.dropna().values
 
     m = actual.shape[0] # mutually exclusive events
     # calculate gridsize g that produces prob_space of size at most max_size
@@ -141,7 +141,8 @@ Actuals = pd.read_csv(file_actuals)
 
 # read actuals from file
 #CFF, Actuals = pd.read_csv( folder_GJ + file_actuals, header=0, sep='\t')
-Chimp_chances = [DTC(actual) for actual in Actuals.drop(columns='CFFs').values]# calculate chances
+# Chimp_chances = [DTC(actual) for actual in Actuals.drop(columns='CFFs').values]# calculate chances
+Chimp_chances = Actuals.drop(columns='CFFs').apply(DTC, axis=1).values # calculate chances
 print ("Chimp Test \n chimp has chances ", Chimp_chances, 
        " \n of doing better than clueless in the respective CFFs")
 #write results to file_chimp          
