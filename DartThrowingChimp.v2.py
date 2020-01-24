@@ -115,7 +115,8 @@ def DTC(actual, max_size = 10000, grid = 101):
     Examples: Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])]
     DTC(Actuals) ->  array([0.13434285, 0.18811881]) 
     """
-    actual = actual.dropna().values
+    # actual = actual.dropna().values
+    actual = actual[~np.isnan(actual)]
 
     m = actual.shape[0] # mutually exclusive events
     # calculate gridsize g that produces prob_space of size at most max_size
@@ -133,19 +134,24 @@ def DTC(actual, max_size = 10000, grid = 101):
 
 
 # Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])] # example
+# CFFs = ['Test1', 'Test2']
+
 folder_GJ= "C:/Users/Giovanni/Documents/Documents/Good Judgment/FOCUS project/"
 file_actuals = "Analysis Cycle 3 GJ2.0 - Actuals.csv"
 file_chimp = "Chimp Chance.csv"
 
 Actuals = pd.read_csv(file_actuals)
+if type(Actuals) == pd.DataFrame:
+    CFFs = Actuals.CFFs
+    Actuals = list(Actuals.drop(columns='CFFs').values)
 
 # read actuals from file
 #CFF, Actuals = pd.read_csv( folder_GJ + file_actuals, header=0, sep='\t')
-# Chimp_chances = [DTC(actual) for actual in Actuals.drop(columns='CFFs').values]# calculate chances
-Chimp_chances = Actuals.drop(columns='CFFs').apply(DTC, axis=1).values # calculate chances
+Chimp_chances = [DTC(actual) for actual in Actuals]# calculate chances
+# Chimp_chances = Actuals.drop(columns='CFFs').apply(DTC, axis=1).values # calculate chances
 print ("Chimp Test \n chimp has chances ", Chimp_chances, 
        " \n of doing better than clueless in the respective CFFs")
 #write results to file_chimp          
 
-df = pd.DataFrame({'CFFs': Actuals.CFFs, 'DTC': Chimp_chances})
+df = pd.DataFrame({'CFFs': CFFs, 'DTC': Chimp_chances})
 df.to_csv(file_chimp, index=False)
