@@ -103,7 +103,7 @@ def FS(F, P, C=0.005):
     return np.dot(F, np.log2(P.T)) + np.log2(len(F))
 
 
-def DTC(actual, max_size = 10000, grid = 101):
+def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
     """    
     Calculates the chance that a Dart Throwing Chimp has to score better than
     clueless, i.e. ignorance prior, or uniform forecast, using the Fair Skill.
@@ -112,8 +112,12 @@ def DTC(actual, max_size = 10000, grid = 101):
     grid
     Returns an np.array row of probabilities that a dart-throwing chimp 
     would have to obtain scores better than ignorance prior.
-    Examples: Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])]
-    DTC(Actuals) ->  array([0.13434285, 0.18811881]) 
+    Examples: 
+        actual1 = np.array([0.5,0.3,0.2]), 
+        DTC(actual1) -> 0.13434285
+
+        actual2 = np.array([0.6,0.4])]
+        DTC(actual2) -> 0.18811881
     """
     # actual = actual.dropna().values
     actual = actual[~np.isnan(actual)]
