@@ -110,8 +110,8 @@ def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
     actual = np.array vector of actual frequencies 
     max_size
     grid
-    Returns an np.array row of probabilities that a dart-throwing chimp 
-    would have to obtain scores better than ignorance prior.
+    Returns the probability that a dart-throwing chimp 
+    would have to obtain a score better than ignorance prior.
     Examples: 
         actual1 = np.array([0.5,0.3,0.2]), 
         DTC(actual1) -> 0.13434285
