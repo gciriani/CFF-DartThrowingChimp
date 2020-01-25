@@ -3,7 +3,7 @@
 Counter-Factual Forecast that is better than a naive uniform prob. distr.
 
 Created on Thu Jan  9 17:00:17 2020
-@authors: Giovanni Ciriani & Zarak Muhamad
+@authors: Giovanni Ciriani & Zarak Mahmud
 """
 # Will need ternary library  for plot of 3 bin example:
 #   https://github.com/marcharper/python-ternary
@@ -107,7 +107,7 @@ def DTC(actual, max_size = 10000, grid = 101):
     """    
     Calculates the chance that a Dart Throwing Chimp has to score better than
     clueless, i.e. ignorance prior, or uniform forecast, using the Fair Skill.
-    Actuals = list of np.array vectors of actual frequencies 
+    actual = np.array vector of actual frequencies 
     max_size
     grid
     Returns an np.array row of probabilities that a dart-throwing chimp 
@@ -133,25 +133,47 @@ def DTC(actual, max_size = 10000, grid = 101):
     return (chimp_FS > 0).sum() / chimp_FS.shape[0] 
 
 
-# Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])] # example
-# CFFs = ['Test1', 'Test2']
+def apply_DTC(Actuals: list) -> list:
+    """Performs DTC on a collection of numpy arrays. """
+    # [f(x) for x in X] is a common pattern for applying some function to
+    # a collection
+    Chimp_chances = [DTC(actual) for actual in Actuals]
+    print ("Chimp Test \n chimp has chances ", Chimp_chances, 
+           " \n of doing better than clueless in the respective CFFs")
+    return Chimp_chances
 
-folder_GJ= "C:/Users/Giovanni/Documents/Documents/Good Judgment/FOCUS project/"
-file_actuals = "Analysis Cycle 3 GJ2.0 - Actuals.csv"
-file_chimp = "Chimp Chance.csv"
 
-Actuals = pd.read_csv(file_actuals)
-if type(Actuals) == pd.DataFrame:
+def read_data(file_path: str) -> tuple:
+    """Returns a tuple of a list of questions and a list of np arrays"""
+    Actuals = pd.read_csv(file_path)
     CFFs = Actuals.CFFs
     Actuals = list(Actuals.drop(columns='CFFs').values)
+    return CFFs, Actuals
 
-# read actuals from file
-#CFF, Actuals = pd.read_csv( folder_GJ + file_actuals, header=0, sep='\t')
-Chimp_chances = [DTC(actual) for actual in Actuals]# calculate chances
-# Chimp_chances = Actuals.drop(columns='CFFs').apply(DTC, axis=1).values # calculate chances
-print ("Chimp Test \n chimp has chances ", Chimp_chances, 
-       " \n of doing better than clueless in the respective CFFs")
-#write results to file_chimp          
 
-df = pd.DataFrame({'CFFs': CFFs, 'DTC': Chimp_chances})
-df.to_csv(file_chimp, index=False)
+def write_data(labels: list, data: list, filename: str) -> None:
+    assert len(labels) == len(data), "Length of labels does not match data"
+    df = pd.DataFrame({'CFFs': labels, 'DTC': data})
+    df.to_csv(filename, index=False)
+
+
+def main(test=False):
+    folder_GJ= "C:/Users/Giovanni/Documents/Documents/Good Judgment/FOCUS project/"
+    file_actuals = "Analysis Cycle 3 GJ2.0 - Actuals.csv"
+    file_chimp = "Chimp Chance.csv"
+
+    if test == True:
+        Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])] # example
+        CFFs = ['Test1', 'Test2']
+    else:
+        # read actuals from file
+        CFFs, Actuals = read_data(file_actuals)
+
+    Chimp_chances = apply_DTC(Actuals)
+
+    #write results to file_chimp          
+    write_data(CFFs, Chimp_chances, file_chimp)
+
+
+if __name__ == "__main__":
+    main(True)
