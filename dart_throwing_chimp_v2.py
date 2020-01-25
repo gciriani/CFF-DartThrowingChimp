@@ -112,12 +112,14 @@ def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
     grid
     Returns the probability that a dart-throwing chimp 
     would have to obtain a score better than ignorance prior.
-    Examples: 
-        actual1 = np.array([0.5,0.3,0.2]), 
-        DTC(actual1) -> 0.13434285
 
-        actual2 = np.array([0.6,0.4])]
-        DTC(actual2) -> 0.18811881
+    >>> actual1 = np.array([0.5,0.3,0.2])
+    >>> DTC(actual1)
+    0.13434284604931082
+
+    >>> actual2 = np.array([0.6,0.4])
+    >>> DTC(actual2)
+    0.18811881188118812
     """
     # actual = actual.dropna().values
     actual = actual[~np.isnan(actual)]
@@ -180,4 +182,6 @@ def main(test=False):
 
 
 if __name__ == "__main__":
-    main(test=True)
+    import doctest
+    doctest.testmod()
+    # main(test=True)
