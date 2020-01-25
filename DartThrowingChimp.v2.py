@@ -162,7 +162,7 @@ def main(test=False):
     file_actuals = "Analysis Cycle 3 GJ2.0 - Actuals.csv"
     file_chimp = "Chimp Chance.csv"
 
-    if test == True:
+    if test:
         Actuals = [np.array([0.5,0.3,0.2]), np.array([0.6,0.4])] # example
         CFFs = ['Test1', 'Test2']
     else:
@@ -176,4 +176,4 @@ def main(test=False):
 
 
 if __name__ == "__main__":
-    main(True)
+    main(test=True)
