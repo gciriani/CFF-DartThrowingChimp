@@ -76,11 +76,15 @@ def FS(F, P, C=0.005):
         probabilities of mutually exclusive events summing to 1.
     Returns an np.array row of n scores, one for each row of P passed. 
     C = small constant to handle log(0) exceptions.
-    Examples: F = np.array([0.01, 0.04, 0.11, 0.22, 0.62])
-    P = np.array([0.29,0.45,0.19,0.07,0.])
-    FS(F, P) -> -3.59153205
-    FS(np.array([0,.1,.9]),prob_space(3,3)) ->  array([ 0.80752727, 
-    -0.08593153, -6.05889369,  0.57773093, -5.39523123, -5.29595803])
+
+    >>> F = np.array([0.01, 0.04, 0.11, 0.22, 0.62])
+    >>> P = np.array([0.29,0.45,0.19,0.07,0.])
+    >>> FS(F, P)
+    -3.5915320480592414
+
+    >>> FS(np.array([0,.1,.9]), prob_space(3,3))
+    array([ 0.80752727, -0.08593153, -6.05889369,  0.57773093, -5.39523123,
+           -5.29595803])
     """
     # replace 0 values with C then normalize
     # start by counting 0 occurences
