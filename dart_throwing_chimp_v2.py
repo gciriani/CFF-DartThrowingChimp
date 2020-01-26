@@ -125,8 +125,6 @@ def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
     >>> DTC(actual2)
     0.18811881188118812
     """
-    # actual = actual.dropna().values
-    actual = actual[~np.isnan(actual)]
 
     m = actual.shape[0] # mutually exclusive events
     # calculate gridsize g that produces prob_space of size at most max_size
@@ -147,7 +145,7 @@ def apply_DTC(Actuals: list) -> list:
     """Performs DTC on a collection of numpy arrays. """
     # [f(x) for x in X] is a common pattern for applying some function to
     # a collection
-    Chimp_chances = [DTC(actual) for actual in Actuals]
+    Chimp_chances = [DTC(actual[~np.isnan(actual)]) for actual in Actuals]
     print ("Chimp Test \n chimp has chances ", Chimp_chances, 
            " \n of doing better than clueless in the respective CFFs")
     return Chimp_chances
@@ -188,4 +186,4 @@ def main(test=False):
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    # main(test=True)
+    main(test=False)
