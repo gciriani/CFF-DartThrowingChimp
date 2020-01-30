@@ -136,7 +136,7 @@ def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
        g = g + 1
     g = min( g-1, 101 ) # keep 101, should the calculation exceed 101
     # set up dart table of all possible probabilities combinations
-    dart_table = prob_space(len(actual), g) 
+    dart_table = prob_space(m, g) 
     # calculate Fair Skill for all probability combinations
     chimp_FS = FS(actual, dart_table)
     # calculate the chance of doing better than clueless and add it 
