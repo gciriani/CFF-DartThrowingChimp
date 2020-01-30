@@ -79,8 +79,9 @@ def FS(F, P, C=0.005):
 
     >>> F = np.array([0.01, 0.04, 0.11, 0.22, 0.62])
     >>> P = np.array([0.29,0.45,0.19,0.07,0.])
-    >>> FS(F, P)
-    -3.5915320480592414
+    >>> result = FS(F, P)
+    >>> print(f"{result:.8f}")
+    -3.59153205
 
     >>> FS(np.array([0,.1,.9]), prob_space(3,3))
     array([ 0.80752727, -0.08593153, -6.05889369,  0.57773093, -5.39523123,
@@ -118,14 +119,15 @@ def DTC(actual: np.ndarray, max_size = 10000, grid = 101) -> float:
     would have to obtain a score better than ignorance prior.
 
     >>> actual1 = np.array([0.5,0.3,0.2])
-    >>> DTC(actual1)
-    0.13434284604931082
+    >>> result = DTC(actual1)
+    >>> print(f"{result:.8f}")
+    0.13434285
 
     >>> actual2 = np.array([0.6,0.4])
-    >>> DTC(actual2)
-    0.18811881188118812
+    >>> result = DTC(actual2)
+    >>> print(f"{result:.8f}")
+    0.18811881
     """
-
     m = actual.shape[0] # mutually exclusive events
     # calculate gridsize g that produces prob_space of size at most max_size
     g = 5 # minimum estimate to start searching from
@@ -146,6 +148,8 @@ def apply_DTC(Actuals: list) -> list:
     # [f(x) for x in X] is a common pattern for applying some function to
     # a collection
     Chimp_chances = [DTC(actual[~np.isnan(actual)]) for actual in Actuals]
+    # Chimp_chances = [DTC(actual[~pd.isnull(actual)]) for actual in Actuals]
+
     print ("Chimp Test \n chimp has chances ", Chimp_chances, 
            " \n of doing better than clueless in the respective CFFs")
     return Chimp_chances
