@@ -187,9 +187,9 @@ def DTC_demo(p1=0.5, p2=0.3):
 
 def read_data(file_path: str) -> tuple:
     """Returns a tuple of a list of questions and a list of np arrays"""
-    Actuals = pd.read_csv(file_path)
-    CFFs = Actuals.CFFs
-    Actuals = list(Actuals.drop(columns='CFFs').values)
+    Actuals = pd.read_csv(file_path, index_col=0)
+    CFFs = Actuals.index.values
+    Actuals = list(Actuals.values)
     return CFFs, Actuals
 
 
