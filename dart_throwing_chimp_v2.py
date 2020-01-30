@@ -155,6 +155,36 @@ def apply_DTC(Actuals: list) -> list:
     return Chimp_chances
 
 
+def DTC_demo(p1=0.5, p2=0.3):
+    """3-Bin, 2-D representation to illustrate the concept"""
+    Example = np.array([p1, p2, 1-p1-p2])
+    P = prob_space(3,101)
+    m = Example.shape[0]
+    Z = FS(Example, P)
+    chimp = DTC(Example)
+    Better = Z > 0
+    Xbetter, Ybetter = P[Better,0], P[Better,1]
+    X , Y = P[:,0] , P[:,1]
+    #plt.plot(X,Y, 'b.')
+    plt.plot(Xbetter, Ybetter, 'g.',
+             label='Forecast space with Fair Skill > 0')
+    plt.plot(X, Y, '.b', markersize=0.5,
+             label='Probability space of possible forecasts')
+    plt.plot(Example[0], Example[1], 'ro',
+             label='Perfect Counter-Factual Forecast')
+    plt.plot([1/m], [1/m], '+b', markersize=10.,
+             label='Ignorance prior')
+    plt.xlabel('Prob. Bin 1')
+    plt.ylabel('Prob. Bin 2')
+    plt.title("Dart-Throwing Chimp - 3-Bin Forecast\n" +
+              "{0:.0%}".format(chimp) +
+              " Chances of Forecasting Better Than Ignorance Prior")
+    plt.legend(loc="upper right")
+    fig = matplotlib.pyplot.gcf()
+    fig.set_size_inches(8, 8)
+    return
+
+
 def read_data(file_path: str) -> tuple:
     """Returns a tuple of a list of questions and a list of np arrays"""
     Actuals = pd.read_csv(file_path)
