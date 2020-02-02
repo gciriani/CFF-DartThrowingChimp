@@ -17,9 +17,10 @@ import numpy as np
 #import os.path
 import ternary
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 
-EPSILON = 0.005
+C = 0.005 # small constant
 FREQ = [0.5, 0.3, 0.2]
 
 
@@ -35,6 +36,9 @@ def FS(F, P, m):
     #FS = np.log2(x).multiply(y,axis='index')      
     # return (f * np.log2(p)).sum(axis=1) + np.log2(m)
     determined = 1 + np.sum([-1 * p for p in P])
+    determined[determined < 0] = np.nan
+    determined[np.isclose(determined, 0)] = C
+    print(determined)
     return np.sum([f * np.log2(p) for f, p in zip(F[:-1], P)]) + F[-1] * np.log2(determined) + np.log2(m)
 
 
@@ -155,6 +159,20 @@ def plot_2D(P, z, title):
     plt.show()
 
 
+def generate_heatmap_data(score, scale=1):
+    from ternary.helpers import simplex_iterator
+    d = dict()
+    for (i,j,k) in simplex_iterator(scale):
+        d[(i,j)] = score[i, j]
+    return d
+
+
+def generate_points(score, scale):
+    dart = np.where(np.isclose(score, 0.667, rtol=0.005))
+    points = [(i, j, scale - i - j) for i, j in zip(*dart)]
+    return points
+
+
 def main(frequencies=FREQ):
     # F = [0.2, 0.2, 0.4, 0.1, 0.1]
     assert sum(frequencies) == 1, "Frequency of each event, must sum to 1 = 100% prob."
@@ -163,6 +181,7 @@ def main(frequencies=FREQ):
     xx, yy = linear_space(m)
 
     P = linear_space(m)
+
     fs = FS(frequencies, P, m)
     bs = BS2(frequencies, xx, yy)
     prob_fs = dart_probability(fs, m, method='fs')
@@ -171,8 +190,27 @@ def main(frequencies=FREQ):
     print(f"Probability of having BS < 0.667 is {prob_bs}")
 
     if m == 3:
-        plot_2D(P, fs, title='Fair Skill')
-        plot_2D(P, bs, title='Brier Score')
+        # plot_2D(P, fs, title='Fair Skill')
+        # plot_2D(P, bs, title='Brier Score')
+
+        scale=98
+        scaler = MinMaxScaler()
+        fs = scaler.fit_transform(fs)
+        d = generate_heatmap_data(fs, scale)
+
+        # tax.plot(points, linewidth=2.0, label="Curve")
+
+        print("Plotting projected simplex...")
+        figure, tax = ternary.figure(scale=scale)
+        tax.heatmap(d, style="triangular")
+        tax.boundary()
+        tax.set_title("Fair Skill Score")
+        tax.show()
+
+        # points = generate_points(bs, scale)
+        # print(points)
+        # tax.scatter(points, marker='.', color='red', label="Red Squares")
+        # tax.show()
 
 
 if __name__ == "__main__":
